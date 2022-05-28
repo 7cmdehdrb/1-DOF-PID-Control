@@ -7,6 +7,7 @@ from time import sleep
 import serial
 import threading
 import math as m
+from low_pass_filter import LowPassFilter
 
 
 exitThread = False
@@ -107,29 +108,30 @@ def inputFilter(value: int):
 if __name__ == "__main__":
     rospy.init_node("PID")
 
+    inputDegree = 120
+    hz = 10
+
     # Objects
     control = Control(port_num="/dev/ttyACM0")
+    lpf = LowPassFilter(cutoff_freq=0.5, ts=(1 / hz))
 
     servo_pub = rospy.Publisher("servo", UInt32, queue_size=1)
     load_pub = rospy.Publisher("load", Float32, queue_size=1)
 
-    inputVal = 120
-    hz = 10
-
     r = rospy.Rate(hz)
     while not rospy.is_shutdown():
-        val = int(control.loadData)
+        val = control.loadData
 
         requiredLoad = control.PControl(
             currentLoad=val, desiredLoad=70, dt=(1 / hz))
-        inputVal += requiredLoad
+        inputDegree += requiredLoad
 
-        inputVal = int(inputFilter(inputVal))
+        inputDegree = int(inputFilter(inputDegree))
 
-        control.write_data(inputVal)
+        control.write_data(inputDegree)
 
         servo_data = UInt32()
-        servo_data.data = inputVal
+        servo_data.data = inputDegree
 
         load_data = Float32()
         load_data.data = val
@@ -142,7 +144,7 @@ if __name__ == "__main__":
 
         rospy.loginfo(
             "Input DEG: %d, Load: %f, Gain: %f"
-            % (inputVal, control.loadData, requiredLoad)
+            % (inputDegree, control.loadData, requiredLoad)
         )
 
         r.sleep()
