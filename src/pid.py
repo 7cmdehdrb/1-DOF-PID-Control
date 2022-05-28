@@ -53,7 +53,7 @@ class Control:
         # self.write_data(991)
         # sleep(5)
 
-        waitTime = 10
+        waitTime = 0
 
         print("RESET SERVO...")
         for i in range(20):
@@ -113,14 +113,16 @@ if __name__ == "__main__":
 
     # Objects
     control = Control(port_num="/dev/ttyACM0")
-    lpf = LowPassFilter(cutoff_freq=0.5, ts=(1 / hz))
+    lpf = LowPassFilter(cutoff_freq=1., ts=(1 / hz))
 
     servo_pub = rospy.Publisher("servo", UInt32, queue_size=1)
     load_pub = rospy.Publisher("load", Float32, queue_size=1)
+    test_pub = rospy.Publisher("test", Float32, queue_size=1)
 
     r = rospy.Rate(hz)
     while not rospy.is_shutdown():
         val = control.loadData
+        val = lpf.filter(val)
 
         requiredLoad = control.PControl(
             currentLoad=val, desiredLoad=70, dt=(1 / hz))
@@ -136,11 +138,15 @@ if __name__ == "__main__":
         load_data = Float32()
         load_data.data = val
 
+        test_data = Float32()
+        test_data.data = control.loadData
+
         if servo_pub.get_num_connections() > 0:
             servo_pub.publish(servo_data)
 
         if load_pub.get_num_connections() > 0:
             load_pub.publish(load_data)
+            test_pub.publish(test_data)
 
         rospy.loginfo(
             "Input DEG: %d, Load: %f, Gain: %f"
