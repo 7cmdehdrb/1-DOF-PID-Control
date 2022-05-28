@@ -1,0 +1,13 @@
+<package>
+  <description brief="PID">
+
+     PID
+
+  </description>
+  <author>acca</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/PID</url>
+  <depend package="rospy"/>
+
+</package>
