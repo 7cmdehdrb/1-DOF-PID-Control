@@ -8,7 +8,8 @@ Panels:
         - /Status1
         - /RobotModel1
         - /RobotModel1/Links1
-        - /RobotModel1/Links1/test1
+        - /RobotModel1/Links1/loadcell1
+        - /RobotModel1/Links1/loadcell_plate1
         - /Axes1
       Splitter Ratio: 0.5
     Tree Height: 549
@@ -56,7 +57,7 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Alpha: 1
+    - Alpha: 0.5
       Class: rviz/RobotModel
       Collision Enabled: false
       Enabled: true
@@ -71,7 +72,32 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        test:
+        dc_roller:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        loadcell:
+          Alpha: 1
+          Show Axes: true
+          Show Trail: false
+          Value: true
+        loadcell_plate:
+          Alpha: 1
+          Show Axes: true
+          Show Trail: false
+          Value: true
+        loadcell_pressure:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        servo_arm:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        servo_support:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -117,25 +143,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 42.73733139038086
+      Distance: 25.369638442993164
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 8.85425853729248
-        Y: -0.2933143973350525
-        Z: -1.230786919593811
+        X: 13.531238555908203
+        Y: -1.0300300121307373
+        Z: 1.5471442937850952
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5403984785079956
+      Pitch: 0.5053987503051758
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.4003913402557373
+      Yaw: 2.0503931045532227
     Saved: ~
 Window Geometry:
   Displays:
@@ -153,5 +179,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1267
-  X: 67
-  Y: 27
+  X: 444
+  Y: 171
