@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     servo_pub = rospy.Publisher("servo", UInt32, queue_size=1)
     load_pub = rospy.Publisher("load", Float32, queue_size=1)
-    test_pub = rospy.Publisher("test", Float32, queue_size=1)
+    load_raw_pub = rospy.Publisher("load_raw", Float32, queue_size=1)
 
     r = rospy.Rate(hz)
     while not rospy.is_shutdown():
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         val = lpf.filter(val)
 
         requiredLoad = control.PControl(
-            currentLoad=val, desiredLoad=70, dt=(1 / hz))
+            currentLoad=val, desiredLoad=80, dt=(1 / hz))
         inputDegree += requiredLoad
 
         inputDegree = int(inputFilter(inputDegree))
@@ -138,15 +138,15 @@ if __name__ == "__main__":
         load_data = Float32()
         load_data.data = val
 
-        test_data = Float32()
-        test_data.data = control.loadData
+        load_data_raw = Float32()
+        load_data_raw.data = control.loadData
 
         if servo_pub.get_num_connections() > 0:
             servo_pub.publish(servo_data)
 
         if load_pub.get_num_connections() > 0:
             load_pub.publish(load_data)
-            test_pub.publish(test_data)
+            load_raw_pub.publish(load_data_raw)
 
         rospy.loginfo(
             "Input DEG: %d, Load: %f, Gain: %f"
