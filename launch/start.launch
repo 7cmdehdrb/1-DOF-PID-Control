@@ -1,9 +1,10 @@
 <launch>
 
     <include file="$(find PID)/launch/urdf.launch" />
-    <node pkg="PID" type="servo_joint.py" name="servo_joint" output="screen" />
+    <node pkg="PID" type="servo_joint.py" name="servo_joint" />
+    <node pkg="PID" type="pressure.py" name="pressure_visualizer" />
 
     <!-- PID node -->
-    <node pkg="PID" type="pid.py" name="PID" />
+    <node pkg="PID" type="pid.py" name="PID" output="screen" />
 
 </launch>

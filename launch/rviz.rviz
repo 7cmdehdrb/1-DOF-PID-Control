@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /RobotModel1
         - /RobotModel1/Links1
         - /RobotModel1/Links1/loadcell1
         - /RobotModel1/Links1/loadcell_plate1
@@ -110,10 +109,18 @@ Visualization Manager:
       Visual Enabled: true
     - Class: rviz/Axes
       Enabled: true
-      Length: 10
+      Length: 3
       Name: Axes
-      Radius: 1
+      Radius: 0.20000000298023224
       Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /pressure
+      Name: Marker
+      Namespaces:
+        pressure: true
+      Queue Size: 100
       Value: true
   Enabled: true
   Global Options:
@@ -143,25 +150,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 25.369638442993164
+      Distance: 30.956993103027344
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 13.531238555908203
-        Y: -1.0300300121307373
-        Z: 1.5471442937850952
+        X: 11.553182601928711
+        Y: -2.0182201862335205
+        Z: 0.6121041774749756
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5053987503051758
+      Pitch: 0.3403988778591156
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.0503931045532227
+      Yaw: 2.170391798019409
     Saved: ~
 Window Geometry:
   Displays:
@@ -180,4 +187,4 @@ Window Geometry:
     collapsed: false
   Width: 1267
   X: 444
-  Y: 171
+  Y: 111
