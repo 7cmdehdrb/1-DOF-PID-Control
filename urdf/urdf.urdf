@@ -57,12 +57,12 @@
     </link>
 
 
-    <joint name="base_to_dc" type="revolute">
+    <joint name="base_to_dc" type="fixed">
         <parent link="base_link" />
         <child link="dc_roller" />
         <origin xyz="25 -8 3" rpy="0 0 0" />
         <axis xyz="0 1 0" />
-        <limit lower="-3.14" upper="3.14" effort="20" velocity="5" />
+        <!-- <limit lower="-3.14" upper="3.14" effort="20" velocity="5" /> -->
     </joint>
 
 

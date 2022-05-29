@@ -49,9 +49,6 @@ class Control:
                 print(data)
 
     def initialize(self):
-        # print("STOP DC MOTOR...")
-        # self.write_data(991)
-        # sleep(5)
 
         waitTime = 0
 
@@ -65,9 +62,6 @@ class Control:
             self.write_data(120)
             sleep(1)
 
-        # print("Start DC Motor")
-        # self.write_data(990)
-
     def write_data(self, data: int):
         """
         Code
@@ -78,11 +72,10 @@ class Control:
             993: Reset Servo Motor
 
         """
-        # print("Write %d" % data)
         bytesData = bytes((str(data) + "\n").encode("utf-8"))
         self.ser.write(bytesData)
 
-    def PControl(self, currentLoad: int, desiredLoad: int, dt: float):
+    def PIControl(self, currentLoad: int, desiredLoad: int, dt: float):
         self.p_err = desiredLoad - currentLoad
         self.i_err += self.p_err * self.i_gain
 
@@ -124,7 +117,7 @@ if __name__ == "__main__":
         val = control.loadData
         val = lpf.filter(val)
 
-        requiredLoad = control.PControl(
+        requiredLoad = control.PIControl(
             currentLoad=val, desiredLoad=80, dt=(1 / hz))
         inputDegree += requiredLoad
 
