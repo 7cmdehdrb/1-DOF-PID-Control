@@ -2,13 +2,12 @@
 
 
 import rospy
-from std_msgs.msg import Float32, UInt32
-from time import sleep
+import math as m
+import numpy as np
 import serial
 import threading
-import math as m
-from low_pass_filter import LowPassFilter
-
+from time import sleep
+from std_msgs.msg import Float32, UInt32
 
 exitThread = False
 
@@ -21,16 +20,13 @@ class Control:
             baudrate=9600,
         )
 
-        self.loadData = 0.0
-
-        self.p_gain = 0.17
-        self.i_gain = 0.02
-
-        self.p_err = 0.0
-        self.i_err = 0.0
+        self.load_pub = rospy.Publisher("load", Float32, queue_size=1)
+        self.servo_sub = rospy.Subscriber(
+            "servo", UInt32, callback=self.servo_callback)
 
         # Threading
-        thread = threading.Thread(target=self.receive_data)
+        thread = threading.Thread(
+            target=self.receive_data)
         thread.daemon = True
         thread.start()
 
@@ -41,24 +37,23 @@ class Control:
         while not exitThread:
             try:
                 data = self.ser.readline()
-                loadData = float(data)
-                self.loadData = loadData
+                self.load_pub.publish(float(data))
 
             except Exception as ex:
-                print(ex)
-                print(data)
+                rospy.loginfo(ex)
+                rospy.loginfo(data)
 
     def initialize(self):
 
-        waitTime = 0
+        waitTime = 10
 
-        print("RESET SERVO...")
+        rospy.loginfo("RESET SERVO...")
         for i in range(20):
             self.write_data(120)
             sleep(0.1)
 
         for i in range(waitTime):
-            print("Start after %d sec..." % (waitTime - i))
+            rospy.loginfo("Start after %d sec..." % (waitTime - i))
             self.write_data(120)
             sleep(1)
 
@@ -75,75 +70,15 @@ class Control:
         bytesData = bytes((str(data) + "\n").encode("utf-8"))
         self.ser.write(bytesData)
 
-    def PIControl(self, currentLoad: int, desiredLoad: int, dt: float):
-        self.p_err = desiredLoad - currentLoad
-        self.i_err += self.p_err * self.i_gain
-
-        requiredLoad = (self.p_gain * self.p_err) + (self.i_err * dt)
-
-        return requiredLoad
-
-
-def inputFilter(value: int):
-    if value >= 990:
-        return value
-
-    if value < 50:
-        return 50
-
-    elif value > 180:
-        return 180
-
-    else:
-        return value
+    def servo_callback(self, msg):
+        data = msg.data
+        self.write_data(data)
 
 
 if __name__ == "__main__":
-    rospy.init_node("PID")
-
-    inputDegree = 120
-    hz = 10
+    rospy.init_node("control_node")
 
     # Objects
     control = Control(port_num="/dev/ttyACM0")
-    lpf = LowPassFilter(cutoff_freq=1., ts=(1 / hz))
 
-    servo_pub = rospy.Publisher("servo", UInt32, queue_size=1)
-    load_pub = rospy.Publisher("load", Float32, queue_size=1)
-    load_raw_pub = rospy.Publisher("load_raw", Float32, queue_size=1)
-
-    r = rospy.Rate(hz)
-    while not rospy.is_shutdown():
-        val = control.loadData
-        val = lpf.filter(val)
-
-        requiredLoad = control.PIControl(
-            currentLoad=val, desiredLoad=80, dt=(1 / hz))
-        inputDegree += requiredLoad
-
-        inputDegree = int(inputFilter(inputDegree))
-
-        control.write_data(inputDegree)
-
-        servo_data = UInt32()
-        servo_data.data = inputDegree
-
-        load_data = Float32()
-        load_data.data = val
-
-        load_data_raw = Float32()
-        load_data_raw.data = control.loadData
-
-        if servo_pub.get_num_connections() > 0:
-            servo_pub.publish(servo_data)
-
-        if load_pub.get_num_connections() > 0:
-            load_pub.publish(load_data)
-            load_raw_pub.publish(load_data_raw)
-
-        rospy.loginfo(
-            "Input DEG: %d, Load: %f, Gain: %f"
-            % (inputDegree, control.loadData, requiredLoad)
-        )
-
-        r.sleep()
+    rospy.spin()

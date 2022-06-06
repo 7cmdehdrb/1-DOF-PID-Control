@@ -7,4 +7,6 @@
     <!-- PID node -->
     <node pkg="PID" type="pid.py" name="PID" output="screen" />
 
+    <!-- <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot" args="topics /load /servo" /> -->
+
 </launch>
